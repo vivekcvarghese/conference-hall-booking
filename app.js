@@ -83,8 +83,15 @@ async function fetchSlots() {
         const response = await fetch('/api/slots');
         let data = await response.json();
 
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1;
+        const currentDay = now.getDate();
+
+        let initialCount = data.length;
+
         // Migrate old data if necessary (slots without a date)
-        slots = data.map(s => {
+        let mappedSlots = data.map(s => {
             if (!s.date) {
                 s.date = todayStr;
                 s.id = `${todayStr}-${s.id}`;
@@ -102,11 +109,29 @@ async function fetchSlots() {
             return s;
         });
 
+        // Purge memory: filter out any dates older than today
+        slots = mappedSlots.filter(s => {
+            if (!s.date) return true;
+
+            const parts = s.date.split('-');
+            const slotYear = parseInt(parts[0], 10);
+            const slotMonth = parseInt(parts[1], 10);
+            const slotDay = parseInt(parts[2], 10);
+
+            if (slotYear < currentYear) return false;
+            if (slotYear === currentYear && slotMonth < currentMonth) return false;
+            if (slotYear === currentYear && slotMonth === currentMonth && slotDay < currentDay) return false;
+
+            return true;
+        });
+
+        const purgedOldData = slots.length < initialCount;
+
         const addedToday = ensureSlotsForDate(todayStr);
         const addedTomorrow = ensureSlotsForDate(tomorrowStr);
 
-        if (addedToday || addedTomorrow) {
-            saveState(); // sync newly generated base slots
+        if (addedToday || addedTomorrow || purgedOldData) {
+            saveState(); // sync newly generated base slots or push purged state
         }
 
         updateDateToggleUI();
@@ -238,8 +263,28 @@ function renderSlots() {
 // Render the aside bookings list
 function renderBookings() {
     // Only show booked slots that haven't expired, or maybe show all?
-    // Let's just show all booked slots, but we'll format the date.
-    const bookedSlots = slots.filter(s => s.status === 'booked');
+    // User requested to hide past day bookings
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth() + 1;
+    const currentDay = now.getDate();
+
+    const bookedSlots = slots.filter(s => {
+        if (s.status !== 'booked') return false;
+
+        // Filter out past days
+        if (s.date) {
+            const parts = s.date.split('-');
+            const slotYear = parseInt(parts[0], 10);
+            const slotMonth = parseInt(parts[1], 10);
+            const slotDay = parseInt(parts[2], 10);
+
+            if (slotYear < currentYear) return false;
+            if (slotYear === currentYear && slotMonth < currentMonth) return false;
+            if (slotYear === currentYear && slotMonth === currentMonth && slotDay < currentDay) return false;
+        }
+        return true;
+    });
 
     // Sort bookings by date and then startHour
     bookedSlots.sort((a, b) => {
@@ -270,13 +315,42 @@ function renderBookings() {
 
         let displayDate = slot.date === todayStr ? 'Today' : (slot.date === tomorrowStr ? 'Tomorrow' : slot.date);
 
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth() + 1; // 1-12
+        const currentDay = now.getDate();
+        const currentHour = now.getHours();
+
+        // slot.date is in format "YYYY-MM-DD"
+        let isExpired = false;
+        if (slot.date) {
+            const parts = slot.date.split('-');
+            const slotYear = parseInt(parts[0], 10);
+            const slotMonth = parseInt(parts[1], 10);
+            const slotDay = parseInt(parts[2], 10);
+
+            if (slotYear < currentYear) {
+                isExpired = true;
+            } else if (slotYear === currentYear && slotMonth < currentMonth) {
+                isExpired = true;
+            } else if (slotYear === currentYear && slotMonth === currentMonth && slotDay < currentDay) {
+                isExpired = true;
+            } else if (slotYear === currentYear && slotMonth === currentMonth && slotDay === currentDay) {
+                // It is today, check the hour
+                if (currentHour >= (slot.startHour + 1)) {
+                    isExpired = true;
+                }
+            }
+            console.log(`Checking expiration for ${slot.date} ${slot.time}: slotDate=${slotYear}-${slotMonth}-${slotDay}, current=${currentYear}-${currentMonth}-${currentDay}, startHour=${slot.startHour}, currentHour=${currentHour} -> isExpired=${isExpired}`);
+        }
+
         item.innerHTML = `
       <div class="booking-item-header">
         <span class="booking-item-time" style="color: var(--accent);">${displayDate} • ${slot.time}</span>
       </div>
       <div class="booking-item-name"><strong>${slot.bookerName}</strong> (${slot.bookerEmail})</div>
       <div class="booking-item-purpose">"${slot.purpose}"</div>
-      <button class="btn btn-danger cancel-btn" data-id="${slot.id}" style="margin-top: 1rem;">Cancel Booking</button>
+      ${!isExpired ? `<button class="btn btn-danger cancel-btn" data-id="${slot.id}" style="margin-top: 1rem;">Cancel Booking</button>` : `<div style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem; font-style: italic;">Booking Expired</div>`}
     `;
 
         bookingsList.appendChild(item);
