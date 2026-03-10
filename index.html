@@ -74,7 +74,20 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <!-- Custom Dialog Modal -->
+    <div class="custom-dialog-overlay" id="custom-dialog">
+        <div class="custom-dialog-content">
+            <h3 class="custom-dialog-title" id="custom-dialog-title">Notification</h3>
+            <p class="custom-dialog-message" id="custom-dialog-message"></p>
+            <input type="password" id="custom-dialog-input" class="custom-dialog-input" style="display: none;"
+                placeholder="Enter password...">
+            <div class="custom-dialog-actions" id="custom-dialog-actions">
+                <!-- Buttons injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=2"></script>
 </body>
 
 </html>

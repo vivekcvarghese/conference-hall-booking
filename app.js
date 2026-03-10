@@ -42,6 +42,78 @@ const slotIdInput = document.getElementById('slot-id');
 const btnToday = document.getElementById('btn-today');
 const btnTomorrow = document.getElementById('btn-tomorrow');
 
+// Custom Dialog Elements
+const customDialog = document.getElementById('custom-dialog');
+const dialogTitle = document.getElementById('custom-dialog-title');
+const dialogMessage = document.getElementById('custom-dialog-message');
+const dialogInput = document.getElementById('custom-dialog-input');
+const dialogActions = document.getElementById('custom-dialog-actions');
+
+// Custom Dialog Helpers
+function showCustomDialog(options) {
+    return new Promise((resolve) => {
+        dialogTitle.textContent = options.title || 'Notification';
+        dialogMessage.innerHTML = options.message || ''; // Allow HTML for formatted messages
+
+        dialogActions.innerHTML = '';
+
+        if (options.type === 'prompt') {
+            dialogInput.style.display = 'block';
+            dialogInput.value = '';
+            dialogInput.focus();
+        } else {
+            dialogInput.style.display = 'none';
+        }
+
+        const handleClose = (value) => {
+            customDialog.classList.remove('active');
+            resolve(value);
+        };
+
+        if (options.type === 'alert') {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-primary';
+            btn.textContent = 'OK';
+            btn.onclick = () => handleClose(true);
+            dialogActions.appendChild(btn);
+        } else if (options.type === 'confirm' || options.type === 'prompt') {
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn';
+            cancelBtn.style.border = '1px solid var(--card-border)';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.onclick = () => handleClose(null);
+
+            const confirmBtn = document.createElement('button');
+            confirmBtn.className = options.confirmClass || 'btn btn-primary';
+            confirmBtn.textContent = options.confirmText || 'Confirm';
+            confirmBtn.onclick = () => {
+                if (options.type === 'prompt') {
+                    handleClose(dialogInput.value);
+                } else {
+                    handleClose(true);
+                }
+            };
+
+            dialogActions.appendChild(cancelBtn);
+            dialogActions.appendChild(confirmBtn);
+        }
+
+        customDialog.classList.add('active');
+    });
+}
+
+function customAlert(message) {
+    return showCustomDialog({ type: 'alert', message });
+}
+
+function customConfirm(message, confirmText = 'Confirm', confirmClass = 'btn btn-danger') {
+    return showCustomDialog({ type: 'confirm', message, confirmText, confirmClass, title: 'Are you sure?' });
+}
+
+function customPrompt(message) {
+    return showCustomDialog({ type: 'prompt', message, title: 'Authentication Required' });
+}
+
 if (btnToday && btnTomorrow) {
     btnToday.addEventListener('click', () => {
         selectedDate = todayStr;
@@ -139,7 +211,7 @@ async function fetchSlots() {
         renderBookings();
     } catch (error) {
         console.error('Error fetching slots:', error);
-        alert('Could not connect to the booking server. Please ensure the server is running.');
+        customAlert('Could not connect to the booking server. Please ensure the server is running.');
     }
 }
 
@@ -182,7 +254,7 @@ async function saveState() {
         });
     } catch (error) {
         console.error('Error saving slots:', error);
-        alert('Failed to save booking to server.');
+        customAlert('Failed to save booking to server.');
     }
 }
 
@@ -419,14 +491,14 @@ bookingForm.addEventListener('submit', async (e) => {
         await saveState();
 
         // Notify the user of their cancellation PIN
-        alert(`Booking Confirmed! Your Cancellation PIN is: ${cancelPin}\n\nPlease save this PIN. You will need it if you wish to cancel this booking later.`);
+        await customAlert(`Booking Confirmed!<br><br>Your Cancellation PIN is: <strong style="color:var(--accent);font-size:1.5rem;">${cancelPin}</strong><br><br>Please save this PIN. You will need it if you wish to cancel this booking later.`);
     }
 });
 
 // Handle Cancel
 async function cancelBooking(id) {
-    const password = prompt('Enter the cancellation password or contact admin to proceed:');
-    if (password === null) return; // User clicked cancel on prompt
+    const password = await customPrompt('Enter the cancellation password or contact admin to proceed:');
+    if (!password) return; // User clicked cancel on prompt or entered nothing
 
     const slot = slots.find(s => s.id === id);
     if (!slot) return;
@@ -436,11 +508,12 @@ async function cancelBooking(id) {
     const isOwner = slot.cancelPassword && password === slot.cancelPassword;
 
     if (!isAdmin && !isOwner) {
-        alert('Incorrect password. Cancellation aborted.');
+        await customAlert('Incorrect password. Cancellation aborted.');
         return;
     }
 
-    if (confirm('Password accepted. Are you sure you want to cancel this booking? This action cannot be undone.')) {
+    const confirmed = await customConfirm('Password accepted.<br><br>Are you sure you want to cancel this booking? This action cannot be undone.');
+    if (confirmed) {
         const slotIndex = slots.findIndex(s => s.id === id);
         if (slotIndex > -1) {
             slots[slotIndex] = {

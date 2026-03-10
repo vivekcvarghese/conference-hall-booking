@@ -45,18 +45,18 @@ class BookingHandler(http.server.SimpleHTTPRequestHandler):
             slots = load_data()
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
-            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
             self.end_headers()
             self.wfile.write(json.dumps(slots).encode('utf-8'))
             return
             
-        # Serve static files (index.html, style.css, app.js) - Disable cache to fix script updates
-        res = super().send_response
-        self.send_response = lambda code, message=None: (
-            res(code, message),
-            self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        )
+        # Serve static files (index.html, style.css, app.js)
         return super().do_GET()
+
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
+        super().end_headers()
 
     def do_POST(self):
         parsed_path = urlparse(self.path)
