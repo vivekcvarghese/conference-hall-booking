@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conference Hall | Booking</title>
+    <meta name="description" content="Book premium conference spaces effortlessly. No login required.">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <img src="https://www.appadore.com/images/header-logo.svg" alt="Appadore"
+            style="max-height: 80px; margin-bottom: 2rem;">
+        <h1 style="display: none;">Conference Hall</h1>
+        <p class="subtitle">Secure your ideal meeting space in seconds. Experience seamless scheduling with our premium
+            conference facilities.</p>
+    </header>
+
+    <main>
+        <section class="slots-section">
+            <div
+                style="display: flex; flex-direction: row; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--card-border);">
+                <h2 style="margin: 0; border: none; padding: 0;">Available Slots</h2>
+                <div class="date-selector" style="display: flex; gap: 1rem;">
+                    <button id="btn-today" class="btn btn-primary"
+                        style="padding: 0.5rem 1rem; width: auto;">Today</button>
+                    <button id="btn-tomorrow" class="btn"
+                        style="background: transparent; color: white; border: 1px solid var(--card-border); padding: 0.5rem 1rem; width: auto;">Tomorrow</button>
+                </div>
+            </div>
+            <div class="slots-container" id="slots-container">
+                <!-- Slots injected by JS -->
+            </div>
+        </section>
+
+        <aside class="bookings-section">
+            <h2>Current Bookings</h2>
+            <div id="bookings-list" class="booking-details-list">
+                <!-- Bookings injected by JS -->
+            </div>
+        </aside>
+    </main>
+
+    <!-- Booking Modal -->
+    <div class="modal-overlay" id="booking-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Book a Slot</h3>
+                <button class="close-btn" id="close-modal">&times;</button>
+            </div>
+            <form id="booking-form">
+                <input type="hidden" id="slot-id">
+                <p class="slot-time" id="modal-slot-time" style="margin-bottom: 1.5rem; color: var(--accent);"></p>
+
+                <div class="form-group">
+                    <label for="booker-name">Full Name</label>
+                    <input type="text" id="booker-name" class="form-control" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="booker-email">Email Address</label>
+                    <input type="email" id="booker-email" class="form-control" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="booking-purpose">Purpose of Meeting</label>
+                    <textarea id="booking-purpose" class="form-control" rows="3"
+                        placeholder="Quarterly sync with the design team..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

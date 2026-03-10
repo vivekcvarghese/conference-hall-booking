@@ -1,0 +1,139 @@
+[
+  {
+    "id": "2026-03-10-1",
+    "time": "09:00 AM - 10:00 AM",
+    "status": "available",
+    "date": "2026-03-10",
+    "startHour": 9
+  },
+  {
+    "id": "2026-03-10-2",
+    "time": "10:00 AM - 11:00 AM",
+    "status": "available",
+    "date": "2026-03-10",
+    "startHour": 10
+  },
+  {
+    "id": "2026-03-10-3",
+    "time": "11:00 AM - 12:00 PM",
+    "status": "available",
+    "date": "2026-03-10",
+    "startHour": 11
+  },
+  {
+    "id": "2026-03-10-4-v2",
+    "date": "2026-03-10",
+    "time": "12:00 PM - 01:00 PM",
+    "startHour": 12,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-10-4",
+    "time": "01:00 PM - 02:00 PM",
+    "date": "2026-03-10",
+    "startHour": 13,
+    "status": "booked",
+    "bookerName": "Vrindha",
+    "bookerEmail": "wilsonvrindha@gmail.com",
+    "purpose": "Lunch",
+    "cancelPassword": "7069"
+  },
+  {
+    "id": "2026-03-10-5",
+    "time": "02:00 PM - 03:00 PM",
+    "status": "booked",
+    "bookerName": "Vivek",
+    "bookerEmail": "vivekcvarghese123@gmail.com",
+    "purpose": "Meeting",
+    "date": "2026-03-10",
+    "startHour": 14
+  },
+  {
+    "id": "2026-03-10-6",
+    "time": "03:00 PM - 04:00 PM",
+    "date": "2026-03-10",
+    "startHour": 15,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-10-7",
+    "time": "04:00 PM - 05:00 PM",
+    "date": "2026-03-10",
+    "startHour": 16,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-10-8",
+    "time": "05:00 PM - 06:00 PM",
+    "status": "available",
+    "date": "2026-03-10",
+    "startHour": 17
+  },
+  {
+    "id": "2026-03-11-1",
+    "time": "09:00 AM - 10:00 AM",
+    "date": "2026-03-11",
+    "startHour": 9,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-2",
+    "date": "2026-03-11",
+    "time": "10:00 AM - 11:00 AM",
+    "startHour": 10,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-3",
+    "date": "2026-03-11",
+    "time": "11:00 AM - 12:00 PM",
+    "startHour": 11,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-4-v2",
+    "date": "2026-03-11",
+    "time": "12:00 PM - 01:00 PM",
+    "startHour": 12,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-4",
+    "date": "2026-03-11",
+    "time": "01:00 PM - 02:00 PM",
+    "startHour": 13,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-5",
+    "date": "2026-03-11",
+    "time": "02:00 PM - 03:00 PM",
+    "startHour": 14,
+    "status": "booked",
+    "bookerName": "Vivek",
+    "bookerEmail": "vivekcvarghese123@gmail.com",
+    "purpose": "Interview",
+    "cancelPassword": "6457"
+  },
+  {
+    "id": "2026-03-11-6",
+    "date": "2026-03-11",
+    "time": "03:00 PM - 04:00 PM",
+    "startHour": 15,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-7",
+    "date": "2026-03-11",
+    "time": "04:00 PM - 05:00 PM",
+    "startHour": 16,
+    "status": "available"
+  },
+  {
+    "id": "2026-03-11-8",
+    "date": "2026-03-11",
+    "time": "05:00 PM - 06:00 PM",
+    "startHour": 17,
+    "status": "available"
+  }
+]
